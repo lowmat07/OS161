@@ -460,6 +460,8 @@ static const char *testmenu[] = {
 	"[tt2] Thread test 2                 ",
 	"[tt3] Thread test 3                 ",
 	"[mtt] Me thread test                ",
+	"[mut] Me unsafe thread test         ",
+	"[mlt] Me lock thread test           ",
 #if OPT_NET
 	"[net] Network test                  ",
 #endif
@@ -574,6 +576,8 @@ static struct {
 	{ "tt3",	threadtest3 },
 	{ "sy1",	semtest },
 	{ "mtt",	mythreadtest },
+	{ "mut",	myunsafethreadtest },
+	{ "mlt",	mylockthreadtest },
 
 	/* synchronization assignment tests */
 	{ "sy2",	locktest },

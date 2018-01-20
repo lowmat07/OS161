@@ -36,37 +36,56 @@
 #include <synch.h>
 #include <test.h>
 
-int NTHREADS = 10;
+int LTHREADS = 10;
+int nlockloops;
 
 static struct semaphore *tsem = NULL;
-
-//static void mythread(void *, unsigned long);
-//static void myrunthreads(void);
-//int mythreadtest(int, char **);
+static struct lock *tlock = NULL;
+static int counter = 0;
 
 static
 void
 init_sem(void)
 {
-	if (tsem==NULL) {
+	if(tsem==NULL){
 		tsem = sem_create("tsem", 0);
-		if (tsem == NULL) {
-			panic("threadtest: sem_create failed\n");
+		if(tsem == NULL){
+			panic("lockthreadtest: sem_create failed\n");
 		}
 	}
 }
 
 static
 void
-mythread(void *junk, unsigned long num)
+init_lock(void)
 {
-	int ch = '0' + num;
-	//int i;
+	if (tlock==NULL) {
+		tlock = lock_create("tlock");
+		if (tlock == NULL) {
+			panic("lockthreadtest: lock_create failed\n");
+		}
+	}
+}
+
+static
+void
+mylockthread(void *junk, unsigned long num)
+{
+	//int ch = '0' + num;
+	int i;
 
 	(void)junk;
+	(void)num;
+
+	for(i=0; i<nlockloops; i++)
+	{
+		lock_acquire(tlock);
+		counter++;
+		lock_release(tlock);
+	}
 
 	//kprintf("ch %d\n",ch);
-	putch(ch);
+	//putch(ch);
 	//for(i=0; i<200000; i++);
 
 	V(tsem);
@@ -74,15 +93,16 @@ mythread(void *junk, unsigned long num)
 
 static
 void
-myrunthreads(void)
+mylockrunthreads(void)
 {
 	char name[16];
 	int i, result;
 
-	for (i=0; i<NTHREADS; i++) {
+	for (i=0; i<LTHREADS; i++) {
 		snprintf(name, sizeof(name), "threadtest%d", i);
+		init_lock();
 		result = thread_fork(name, NULL,
-				     mythread,
+				     mylockthread,
 				     NULL, i);
 		if (result) {
 			panic("threadtest: thread_fork failed %s)\n", 
@@ -90,27 +110,31 @@ myrunthreads(void)
 		}
 	}
 
-	for (i=0; i<NTHREADS; i++) {
+	
+	for (i=0; i<LTHREADS; i++) {
 		P(tsem);
 	}
+	
 }
 
 
 int
-mythreadtest(int nargs, char **args)
+mylockthreadtest(int nargs, char **args)
 {
 	//(void)nargs;
 	//(void)args;
 	if(nargs > 1)
 	{
 		int ch = atoi(args[1]);
-		NTHREADS = ch;
+		LTHREADS = ch;
 	}
+	nlockloops = (nargs>2) ? atoi(args[2]) : 3;
 
 	init_sem();
-	kprintf("Starting me own thread test...\n");
-	myrunthreads();
-	kprintf("\nMe thread test done.\n");
+	kprintf("Starting me unsafe threadtest...\n");
+	mylockrunthreads();
+	kprintf("counter should be: %d, but is: %d\n", LTHREADS*nlockloops, counter);
+	kprintf("Me thread test done.\n");
 
 	return 0;
 }

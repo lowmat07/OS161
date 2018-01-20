@@ -61,6 +61,8 @@ int locktest(int, char **);
 int cvtest(int, char **);
 //lowmat07 added
 int mythreadtest(int, char **);
+int myunsafethreadtest(int, char **);
+int mylockthreadtest(int, char **);
 //END added
 
 #ifdef UW

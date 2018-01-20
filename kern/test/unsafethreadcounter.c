@@ -36,13 +36,11 @@
 #include <synch.h>
 #include <test.h>
 
-int NTHREADS = 10;
+int UNTHREADS = 10;
+int COUNTNTIMES;
 
 static struct semaphore *tsem = NULL;
-
-//static void mythread(void *, unsigned long);
-//static void myrunthreads(void);
-//int mythreadtest(int, char **);
+static int counter = 0;
 
 static
 void
@@ -58,31 +56,38 @@ init_sem(void)
 
 static
 void
-mythread(void *junk, unsigned long num)
+myunsafethread(void *junk, unsigned long num)
 {
-	int ch = '0' + num;
+	//int ch = '0' + num;
 	//int i;
 
 	(void)junk;
+	(void)num;
+
+	while(COUNTNTIMES > 0)
+	{
+		counter++;
+		--COUNTNTIMES;
+	}
 
 	//kprintf("ch %d\n",ch);
-	putch(ch);
+	//putch(ch);
 	//for(i=0; i<200000; i++);
 
-	V(tsem);
+	//V(tsem);
 }
 
 static
 void
-myrunthreads(void)
+myunsaferunthreads(void)
 {
 	char name[16];
 	int i, result;
 
-	for (i=0; i<NTHREADS; i++) {
+	for (i=0; i<UNTHREADS; i++) {
 		snprintf(name, sizeof(name), "threadtest%d", i);
 		result = thread_fork(name, NULL,
-				     mythread,
+				     myunsafethread,
 				     NULL, i);
 		if (result) {
 			panic("threadtest: thread_fork failed %s)\n", 
@@ -90,27 +95,31 @@ myrunthreads(void)
 		}
 	}
 
+	/*
 	for (i=0; i<NTHREADS; i++) {
 		P(tsem);
 	}
+	*/
 }
 
 
 int
-mythreadtest(int nargs, char **args)
+myunsafethreadtest(int nargs, char **args)
 {
 	//(void)nargs;
 	//(void)args;
 	if(nargs > 1)
 	{
 		int ch = atoi(args[1]);
-		NTHREADS = ch;
+		UNTHREADS = ch;
 	}
+	COUNTNTIMES = (nargs > 2) ? atoi(args[2]) : 3;
 
 	init_sem();
-	kprintf("Starting me own thread test...\n");
-	myrunthreads();
-	kprintf("\nMe thread test done.\n");
+	kprintf("Starting me unsafe threadtest...\n");
+	myunsaferunthreads();
+	kprintf("counter should be: %d, but is: %d\n", UNTHREADS*COUNTNTIMES, counter);
+	kprintf("Me thread test done.\n");
 
 	return 0;
 }
