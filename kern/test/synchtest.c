@@ -68,7 +68,13 @@ cleanitems(void)
 	lock_destroy(testlock);
 	cv_destroy(testcv);
 	sem_destroy(donesem);
-	}
+
+	testsem = 0;
+	testlock = 0;
+	testcv = 0;
+	donesem = 0;
+
+}
 #endif
 
 static
