@@ -36,6 +36,7 @@
 #include <uio.h>
 #include <clock.h>
 #include <thread.h>
+//#include <spinlock.h>
 #include <proc.h>
 #include <synch.h>
 #include <vfs.h>
@@ -462,6 +463,7 @@ static const char *testmenu[] = {
 	"[mtt] Me thread test                ",
 	"[mut] Me unsafe thread test         ",
 	"[mlt] Me lock thread test           ",
+	"[slt] Me spinlock thread test       ",
 #if OPT_NET
 	"[net] Network test                  ",
 #endif
@@ -578,6 +580,7 @@ static struct {
 	{ "mtt",	mythreadtest },
 	{ "mut",	myunsafethreadtest },
 	{ "mlt",	mylockthreadtest },
+	{ "slt",	myspinlockthreadtest },
 
 	/* synchronization assignment tests */
 	{ "sy2",	locktest },

@@ -74,7 +74,7 @@ myunsafethread(void *junk, unsigned long num)
 	//putch(ch);
 	//for(i=0; i<200000; i++);
 
-	//V(tsem);
+	V(tsem);
 }
 
 static
@@ -95,11 +95,11 @@ myunsaferunthreads(void)
 		}
 	}
 
-	/*
-	for (i=0; i<NTHREADS; i++) {
+	
+	for (i=0; i<UNTHREADS; i++) {
 		P(tsem);
 	}
-	*/
+	
 }
 
 
@@ -118,7 +118,8 @@ myunsafethreadtest(int nargs, char **args)
 	init_sem();
 	kprintf("Starting me unsafe threadtest...\n");
 	myunsaferunthreads();
-	kprintf("counter should be: %d, but is: %d\n", UNTHREADS*COUNTNTIMES, counter);
+	//kprintf("counter should be: %d, but is: %d\n", UNTHREADS*COUNTNTIMES, counter);
+	kprintf("counter should be: %d, but is: %d\n", atoi(args[1])*atoi(args[2]), counter);
 	kprintf("Me thread test done.\n");
 
 	return 0;

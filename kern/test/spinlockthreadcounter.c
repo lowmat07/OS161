@@ -34,15 +34,19 @@
 #include <lib.h>
 #include <thread.h>
 #include <synch.h>
+#include <spinlock.h>
 #include <test.h>
 
-int LTHREADS = 10;
-int nlockloops;
+static int STHREADS = 10;
+static int slockloops;
 
 static struct semaphore *tsem = NULL;
-static struct lock *tlock = NULL;
+static struct spinlock *tspinlk = NULL;
+//struct spinlock *tspinlk = NULL;
+//static struct lock *tlock = NULL;
 static int counter = 0;
 
+/*
 static
 void
 init_sem(void)
@@ -54,22 +58,29 @@ init_sem(void)
 		}
 	}
 }
-
+*/
 static
 void
-init_lock(void)
+init_spinlock(void)
 {
-	if (tlock==NULL) {
-		tlock = lock_create("tlock");
-		if (tlock == NULL) {
-			panic("lockthreadtest: lock_create failed\n");
+	if(tsem==NULL){
+		tsem = sem_create("tsem",0);
+		if(tsem == NULL){
+			panic("lockthreadtest: sem_create failed\n");
+		}
+	}
+	//----
+	if (tspinlk==NULL) {
+		spinlock_init(tspinlk);
+		if (tspinlk == NULL) {
+			panic("spinlockthreadtest: spinlock_init failed\n");
 		}
 	}
 }
 
 static
 void
-mylockthread(void *junk, unsigned long num)
+myspinlockthread(void *junk, unsigned long num)
 {
 	//int ch = '0' + num;
 	int i;
@@ -77,11 +88,11 @@ mylockthread(void *junk, unsigned long num)
 	(void)junk;
 	(void)num;
 
-	for(i=0; i<nlockloops; i++)
+	for(i=0; i<slockloops; i++)
 	{
-		lock_acquire(tlock);
+		spinlock_acquire(tspinlk);
 		counter++;
-		lock_release(tlock);
+		spinlock_release(tspinlk);
 	}
 
 	//kprintf("ch %d\n",ch);
@@ -93,25 +104,25 @@ mylockthread(void *junk, unsigned long num)
 
 static
 void
-mylockrunthreads(void)
+myspinlockrunthreads(void)
 {
 	char name[16];
 	int i, result;
 
-	for (i=0; i<LTHREADS; i++) {
+	for (i=0; i<STHREADS; i++) {
 		snprintf(name, sizeof(name), "threadtest%d", i);
-		init_lock();
+		init_spinlock();
 		result = thread_fork(name, NULL,
-				     mylockthread,
+				     myspinlockthread,
 				     NULL, i);
 		if (result) {
-			panic("threadtest: thread_fork failed %s)\n", 
+			panic("myspinlockthreadtest: thread_fork failed %s)\n", 
 			      strerror(result));
 		}
 	}
 
 	
-	for (i=0; i<LTHREADS; i++) {
+	for (i=0; i<STHREADS; i++) {
 		P(tsem);
 	}
 	
@@ -119,21 +130,21 @@ mylockrunthreads(void)
 
 
 int
-mylockthreadtest(int nargs, char **args)
+myspinlockthreadtest(int nargs, char **args)
 {
 	//(void)nargs;
 	//(void)args;
 	if(nargs > 1)
 	{
 		int ch = atoi(args[1]);
-		LTHREADS = ch;
+		STHREADS = ch;
 	}
-	nlockloops = (nargs>2) ? atoi(args[2]) : 3;
+	slockloops = (nargs>2) ? atoi(args[2]) : 3;
 
-	init_sem();
+	//init_spinlock();
 	kprintf("Starting me unsafe threadtest...\n");
-	mylockrunthreads();
-	kprintf("counter should be: %d, but is: %d\n", LTHREADS*nlockloops, counter);
+	myspinlockrunthreads();
+	kprintf("counter should be: %d, but is: %d\n", STHREADS*slockloops, counter);
 	kprintf("Me thread test done.\n");
 
 	return 0;

@@ -36,8 +36,8 @@
 #include <synch.h>
 #include <test.h>
 
-int LTHREADS = 10;
-int nlockloops;
+static int LTHREADS = 10;
+static int nlockloops;
 
 static struct semaphore *tsem = NULL;
 static struct lock *tlock = NULL;
@@ -131,7 +131,7 @@ mylockthreadtest(int nargs, char **args)
 	nlockloops = (nargs>2) ? atoi(args[2]) : 3;
 
 	init_sem();
-	kprintf("Starting me unsafe threadtest...\n");
+	kprintf("Starting me safe threadtest...\n");
 	mylockrunthreads();
 	kprintf("counter should be: %d, but is: %d\n", LTHREADS*nlockloops, counter);
 	kprintf("Me thread test done.\n");

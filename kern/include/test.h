@@ -63,6 +63,7 @@ int cvtest(int, char **);
 int mythreadtest(int, char **);
 int myunsafethreadtest(int, char **);
 int mylockthreadtest(int, char **);
+int myspinlockthreadtest(int, char **);
 //END added
 
 #ifdef UW

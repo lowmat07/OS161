@@ -47,10 +47,16 @@ static volatile unsigned long testval1;
 static volatile unsigned long testval2;
 static volatile unsigned long testval3;
 #ifdef UW
+/*
 static struct semaphore *testsem = 0;
 static struct lock *testlock = 0;
 static struct cv *testcv = 0;
 static struct semaphore *donesem = 0;
+*/
+static struct semaphore *testsem;
+static struct lock *testlock;
+static struct cv *testcv;
+static struct semaphore *donesem;
 #else
 static struct semaphore *testsem;
 static struct lock *testlock;
@@ -68,12 +74,12 @@ cleanitems(void)
 	lock_destroy(testlock);
 	cv_destroy(testcv);
 	sem_destroy(donesem);
-
+/*
 	testsem = 0;
 	testlock = 0;
 	testcv = 0;
 	donesem = 0;
-
+*/
 }
 #endif
 
@@ -81,6 +87,12 @@ static
 void
 inititems(void)
 {
+	testsem=0;
+	testlock=0;
+	testcv=0;
+	donesem=0;
+
+
 	if (testsem==NULL) {
 		testsem = sem_create("testsem", 2);
 		if (testsem == NULL) {
