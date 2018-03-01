@@ -43,6 +43,9 @@ void syscall(struct trapframe *tf);
  * Support functions.
  */
 
+/* lab08 sys_fork */
+
+
 /* Helper for fork(). You write this. */
 void enter_forked_process(struct trapframe *tf);
 
@@ -54,6 +57,9 @@ void enter_new_process(int argc, userptr_t argv, vaddr_t stackptr,
 /*
  * Prototypes for IN-KERNEL entry points for system call implementations.
  */
+
+/* lab08 sys_fork */
+int sys_fork(pid_t *retval);
 
 int sys_reboot(int code);
 int sys___time(userptr_t user_seconds, userptr_t user_nanoseconds);

@@ -543,11 +543,11 @@ static struct {
 	{ "s",		cmd_shell },
 	{ "p",		cmd_prog },
 	{ "mount",	cmd_mount },
-	{ "unmount",	cmd_unmount },
+	{ "unmount",cmd_unmount },
 	{ "bootfs",	cmd_bootfs },
 	{ "pf",		printfile },
 	{ "cd",		cmd_chdir },
-	{ "pwd",	cmd_pwd },
+	{ "pwd",		cmd_pwd },
 	{ "sync",	cmd_sync },
 	{ "panic",	cmd_panic },
 	{ "q",		cmd_quit },
@@ -563,11 +563,11 @@ static struct {
 #endif
 
 	/* stats */
-	{ "kh",         cmd_kheapstats },
+	{ "kh",  cmd_kheapstats },
 
 	/* base system tests */
-	{ "at",		arraytest },
-	{ "bt",		bitmaptest },
+	{ "at",	arraytest },
+	{ "bt",	bitmaptest },
 	{ "km1",	malloctest },
 	{ "km2",	mallocstress },
 #if OPT_NET
