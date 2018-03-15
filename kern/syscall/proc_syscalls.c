@@ -9,10 +9,31 @@
 #include <thread.h>
 #include <addrspace.h>
 #include <copyinout.h>
+#include <mips/trapframe.h>
+
+static void uproc_thread(void *temp_tf, unsigned long k)
+{ 
+	struct trapframe *ctf, ctf_stack;
+	ctf = (struct trapframe *) temp_tf;
+	//fork's child gets set to 0
+	ctf->tf_v0 = 0;
+	ctf->tf_a3 = 0;
+
+	ctf->tf_epc += 4;
+	//(void) temp_tf;
+	
+	ctf_stack = *ctf;
+	kfree(ctf);
+
+	//enter mips_usermode
+	mips_usermode(&ctf_stack);
+	
+	(void) k;
+	//kprintf("hey, i successfully forked and copied tf");
+}
 
   /* this implementation of sys__exit does not do anything with the exit code */
   /* this needs to be fixed to get exit() and waitpid() working properly */
-
 void sys__exit(int exitcode) {
 
   struct addrspace *as;
@@ -50,10 +71,32 @@ void sys__exit(int exitcode) {
 
 /* stub handler for sys_fork() system call */
 int
-sys_fork(pid_t *retval)
+sys_fork(struct trapframe *tf, pid_t *retval)
 {
   /* for now, this is just a stub that always returns a PID of 1 */
   /* you need to fix this to make it work properly */
+  
+  //copy parent addrspace
+  struct addrspace * tas;
+  as_copy(curproc->p_addrspace, &tas);
+  
+  //allocate and copy parent trapframe to temp *ttf
+  struct trapframe * ttf = (struct trapframe*)kmalloc(sizeof(struct trapframe));
+  *ttf = *tf;  
+  
+  //allocate new child pid
+
+  
+  //create and fill in new proc struct
+  struct proc * childproc = proc_create_runprogram("childproc");
+
+  childproc->p_addrspace = tas;
+  
+  //thread_fork
+  //thread_fork("temp", childproc, uproc_thread, NULL, 0);
+  thread_fork("temp", childproc, uproc_thread, (struct trapframe*)ttf, 0);
+
+  //parent sets retval to child pid and returns
   *retval = 1;
   return(0);
 }

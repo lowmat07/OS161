@@ -132,7 +132,7 @@ syscall(struct trapframe *tf)
 #endif // UW
 	    /* Add stuff here */
 	case SYS_fork:
-	  err = sys_fork((int *)&retval);
+	  err = sys_fork(tf,(int *)&retval);
 	  break;
 
 	    /* end:Add stuff here */

@@ -1,0 +1,92 @@
+cscope 15 $HOME/os161/user/my-testbin/stubtest               0000000526
+	@stubtest.c
+
+4 
+	~<uni°d.h
+>
+
+5 
+	~<°dio.h
+>
+
+8 
+	$maö
+()
+
+10 
+pid_t
+ 
+Âid
+, 
+gpid
+, 
+wpid
+;
+
+11 
+de°
+;
+
+14 
+	`¥ötf
+("Test call for fork stub\n");
+
+15 
+Âid
+ = 
+	`f‹k
+();
+
+16 
+	`¥ötf
+("Âid: %d\n", 
+Âid
+);
+
+18 
+	`¥ötf
+("Test call for getpid stub\n");
+
+19 
+gpid
+ = 
+	`gëpid
+();
+
+20 
+	`¥ötf
+("gpid: %d\n", 
+gpid
+);
+
+22 
+	`¥ötf
+("Test call for waitpid stub\n");
+
+23 
+wpid
+ = 
+	`waôpid
+(
+Âid
+, &
+de°
+, 0);
+
+24 
+	`¥ötf
+("wpid: %d\n", 
+wpid
+);
+
+28 
+	}
+}
+
+	@
+1
+.
+0
+1
+11
+stubtest.c

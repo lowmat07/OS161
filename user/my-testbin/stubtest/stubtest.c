@@ -1,5 +1,5 @@
 /*
- * Me writeConsole program.
+ * stubtest program.
  */
 #include <unistd.h>
 #include <stdio.h>

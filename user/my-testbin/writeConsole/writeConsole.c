@@ -8,6 +8,6 @@ int
 main()
 {
 	printf("Hello World\n");
-	//DEBUG(DB_SYSCALL, "test");
+	DEBUG(DB_SYSCALL, "test");
 	return 0; /* avoid compiler warnings */
 }
